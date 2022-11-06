@@ -32,7 +32,7 @@ import time
 from modules.sentiment_analysis import *
 from modules.chart_plotting import *
 from modules.word_document import *
-image = Image.open('./images/SUSS logo.png')
+image = Image.open('SUSS logo.png')
 
 st.set_page_config(layout="wide")
 
