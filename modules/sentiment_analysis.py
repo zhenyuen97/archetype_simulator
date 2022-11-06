@@ -111,47 +111,61 @@ def sentiment(df):
     return neutral, negative, positive
 
 def emotions_lexicon(company_data, emotion_lexicon_df):
-    from nltk.tokenize import sent_tokenize, word_tokenize, RegexpTokenizer
+    from nltk.corpus import brown, stopwords
     from nltk.stem.snowball import SnowballStemmer
-    import pandas as pd 
+    import nltk
+    import string
+    import pandas as pd
     import streamlit as st
     
-    emotions_df = pd.DataFrame(0, index = company_data.index, columns = emotion_lexicon_df.columns)
-    stemmer = SnowballStemmer('english')
-    # Iterate over reviews
-    company_data['reviews'] = company_data['pros'] + company_data['cons']
-    progress_bar = st.progress(0)
-    status_update = st.empty()
+    with st.spinner('Transforming dataset...'):
+        company_data['reviews'] = company_data['pros'] + company_data['cons']
+        company_data['reviews'] = company_data['reviews'].str.lower()
+        stop = stopwords.words('english')
+        company_data['reviews'] = company_data['reviews'].apply(lambda x: ' '.join([word for word in x.split() if word not in (stop)]))
+        company_data["reviews"] = company_data['reviews'].str.replace('[^\w\s]','')
+        
+        emotion_dict = emotion_lexicon_df.to_dict('records')
+        
+        def lemmatize_text(text):    
+            stemmer = SnowballStemmer('english')
+            w_tokenizer = nltk.tokenize.WhitespaceTokenizer()
+            lemmatizer = nltk.stem.WordNetLemmatizer()
+            x = [lemmatizer.lemmatize(w) for w in w_tokenizer.tokenize(text) if w_tokenizer.tokenize(text) != ',']
+            x = [''.join(c for c in s if c not in string.punctuation) for s in x]
+            x = [stemmer.stem(word.lower()) for word in x]
+            
+            return x
+        
+        def transform_list(x):
+            emotion_list = [next((item for item in emotion_dict if item["Word"] == i), None) for i in x]
+            return emotion_list
+
+        def sum_dict_values(dict_list):
+            dict_list = [x for x in dict_list if x is not None]
+            result = {}
+            for d in dict_list:
+                for k, v in d.items():
+                    if k != 'Word' and isinstance(v, int):
+                        result[k] = result.get(k, 0) + v
+            return result    
     
-    count = 0 
-    for row in company_data.itertuples():                       
-        # Tokenise reviews
-        progress_bar.progress(count/len(company_data['reviews']))
-        status_update.text(str(round((count/len(company_data['reviews']))*100)) + '%')
-        document = word_tokenize(company_data.loc[row.Index]['reviews'])
-        
-        # Iterate over words in reviews
-        for word in document:
+    
+        company_data['emotions'] = company_data['reviews'].apply(lemmatize_text)
+        company_data['emotions'] = company_data['emotions'].apply(transform_list)
+        company_data['emotions'] = company_data['emotions'].apply(sum_dict_values)
+        company_data = pd.concat([company_data, company_data['emotions'].apply(pd.Series)], axis = 1)
+    
+    st.success('Transformation completed!!') 
             
-            # Stem and convert to lower
-            word = stemmer.stem(word.lower())
-            
-            # Match emotion score with NRC emotions database
-            emo_score = emotion_lexicon_df[emotion_lexicon_df['Word'] == word]
-            if not emo_score.empty:
-                for emotion in list(emotion_lexicon_df.columns.drop("Word")):
-                    
-                    # Append emotions score
-                    emotions_df.at[row.Index, emotion] += emo_score[emotion]
-        
-        count += 1
-                    
     exclusive_list = ['Anger', 'Fear', 'Disgust']
     openness_list = ['Joy', 'Trust', 'Anticipation']
-    emotions_df['is_exclusive'] = emotions_df[exclusive_list].sum(axis = 1)
-    emotions_df['is_open'] = emotions_df[openness_list].sum(axis = 1)
-    emotions_df['exclusive_openness'] = emotions_df.apply(lambda x: 'Exclusive' if (x['is_exclusive'] > x['is_open']) else 'Open', axis = 1)
-    company_data = pd.concat([company_data, emotions_df], axis = 1)
-    company_data['score'] = company_data['score'].astype(int)
+    company_data['is_exclusive'] = company_data[exclusive_list].sum(axis = 1)
+    company_data['is_open'] = company_data[openness_list].sum(axis = 1)
+    company_data['exclusive_openness'] = company_data.apply(lambda x: 'Exclusive' if (x['is_exclusive'] > x['is_open']) else 'Open', axis = 1)
+    try:
+        company_data['score'] = company_data['score'].astype(int)
+    except KeyError as e:
+        pass
     
     return company_data
