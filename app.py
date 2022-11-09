@@ -63,7 +63,7 @@ def main():
             return company_dict
         @st.cache(allow_output_mutation=True)
         def read_files(file_path, columns_list):
-            df pd.read_csv(file_path)
+            df = pd.read_csv(file_path)
             df.columns = columns_list
             return df
         
