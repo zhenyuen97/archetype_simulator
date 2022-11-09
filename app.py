@@ -415,7 +415,7 @@ and {text_list[4][0]} ({text_list[4][2]}) an average of {text_list[4][1]}')
                
             doc.watermark.set_image("./images/whitebackground.jpg", options)
             doc.save('./report/Company Report.pdf')
-            with open("Company Report.pdf", "rb") as pdf_file:
+            with open("./report/Company Report.pdf", "rb") as pdf_file:
                 PDFbyte = pdf_file.read()
             
             import streamlit_ext as ste
