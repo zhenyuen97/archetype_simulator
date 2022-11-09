@@ -69,29 +69,45 @@ def main():
             return df
 
         # Get Bytedance Glassdoor Reviews
-        rows = run_query("SELECT * from Bytedance_Glassdoor_Reviews;")
-        glassdoor_reviews = get_columns(rows, ['date', 'year exp', 'score','pros', 'cons', 'position'])
+        glassdoor_reviews = pd.read_csv('./data/Bytedance_Glassdoor_Reviews.csv')
+        glassdoor_reviews.columns = ['date', 'year exp', 'score','pros', 'cons', 'position']
+#         rows = run_query("SELECT * from Bytedance_Glassdoor_Reviews;")
+#         glassdoor_reviews = get_columns(rows, ['date', 'year exp', 'score','pros', 'cons', 'position'])
 
         # Get all company cleaned glassdoor reviews
-        rows = run_query("SELECT * from Company_Glassdoor_Data_Cleaned;")
-        all_company_data = get_columns(rows, ['headline', 'date', 'year exp', 'score', 'pros', 'cons', 'company',
+#         rows = run_query("SELECT * from Company_Glassdoor_Data_Cleaned;")
+#         all_company_data = get_columns(rows, ['headline', 'date', 'year exp', 'score', 'pros', 'cons', 'company',
+#                             'position', 'raw_reviews', 'Introvert_Extrovert', 'Intuition_Sensing',
+#                             'Thinking_Feeling', 'Judging_Perceiving', 'Innovative_Traditional',
+#                             'Personality', 'reviews', 'emotions', 'Positive', 'Negative', 'Anger',
+#                             'Anticipation', 'Disgust', 'Fear', 'Joy', 'Sadness', 'Surprise',
+#                             'Trust', 'is_exclusive', 'is_open', 'exclusive_openness'])
+        all_company_data = pd.read_csv('./data/Company_Glassdoor_Data_Cleaned.csv')
+        all_company_data.columns = ['headline', 'date', 'year exp', 'score', 'pros', 'cons', 'company',
                                     'position', 'raw_reviews', 'Introvert_Extrovert', 'Intuition_Sensing',
                                     'Thinking_Feeling', 'Judging_Perceiving', 'Innovative_Traditional',
                                     'Personality', 'reviews', 'emotions', 'Positive', 'Negative', 'Anger',
                                     'Anticipation', 'Disgust', 'Fear', 'Joy', 'Sadness', 'Surprise',
-                                    'Trust', 'is_exclusive', 'is_open', 'exclusive_openness'])
+                                    'Trust', 'is_exclusive', 'is_open', 'exclusive_openness']
+
 
         all_company_data = convert_dict(all_company_data)
         
         # Get emotion lexicon
-        rows = run_query("SELECT * from NRC_Emotion_Lexicon;")
-        emotion_lexicon_df = get_columns(rows, ['Word', 'Positive', 'Negative', 
+#         rows = run_query("SELECT * from NRC_Emotion_Lexicon;")
+#         emotion_lexicon_df = get_columns(rows, ['Word', 'Positive', 'Negative', 
+#                                       'Anger', 'Anticipation', 'Disgust',
+#                                       'Fear', 'Joy', 'Sadness', 'Surprise', 'Trust'])
+        emotion_lexicon_df = pd.read_csv('./data/NRC_Emotion_Lexicon.csv')
+        emotion_lexicon_df.columns = ['Word', 'Positive', 'Negative', 
                                       'Anger', 'Anticipation', 'Disgust',
-                                      'Fear', 'Joy', 'Sadness', 'Surprise', 'Trust'])
+                                      'Fear', 'Joy', 'Sadness', 'Surprise', 'Trust']
         
         # Get personality description
-        rows = run_query("SELECT * from Personality_Type_Description;")
-        personality_type_description = get_columns(rows, ['Personality_Type', 'Name', 'Description'])
+#         rows = run_query("SELECT * from Personality_Type_Description;")
+#         personality_type_description = get_columns(rows, ['Personality_Type', 'Name', 'Description'])
+        personality_type_description = pd.read_csv('./data/personality_type_description.csv')
+        personality_type_description.columns = ['Personality_Type', 'Name', 'Description']
         print(personality_type_description)
         
         # models
