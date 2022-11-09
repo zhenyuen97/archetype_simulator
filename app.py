@@ -45,7 +45,7 @@ def main():
         def init_connection():
             return mysql.connector.connect(**st.secrets["mysql"])
 
-        conn = init_connection()
+#         conn = init_connection()
 
         # Perform query.
         @st.experimental_singleton
@@ -61,7 +61,12 @@ def main():
                 company_dict[company] = df[df['company'] == company]
             
             return company_dict
-          
+        @st.cache(allow_output_mutation=True)
+        def read_files(file_path, columns_list):
+            df pd.read_csv(file_path)
+            df.columns = columns_list
+            return df
+        
         @st.cache(allow_output_mutation=True)
         def get_columns(rows, columns_list):
             df = pd.DataFrame(rows)
@@ -82,14 +87,13 @@ def main():
 #                             'Personality', 'reviews', 'emotions', 'Positive', 'Negative', 'Anger',
 #                             'Anticipation', 'Disgust', 'Fear', 'Joy', 'Sadness', 'Surprise',
 #                             'Trust', 'is_exclusive', 'is_open', 'exclusive_openness'])
-        all_company_data = pd.read_csv('./data/Company_Glassdoor_Data_Cleaned.csv')
-        all_company_data.columns = ['headline', 'date', 'year exp', 'score', 'pros', 'cons', 'company',
+        
+        all_company_data = read_files('./data/Company_Glassdoor_Data_Cleaned.csv', ['headline', 'date', 'year exp', 'score', 'pros', 'cons', 'company',
                                     'position', 'raw_reviews', 'Introvert_Extrovert', 'Intuition_Sensing',
                                     'Thinking_Feeling', 'Judging_Perceiving', 'Innovative_Traditional',
                                     'Personality', 'reviews', 'emotions', 'Positive', 'Negative', 'Anger',
                                     'Anticipation', 'Disgust', 'Fear', 'Joy', 'Sadness', 'Surprise',
-                                    'Trust', 'is_exclusive', 'is_open', 'exclusive_openness']
-
+                                    'Trust', 'is_exclusive', 'is_open', 'exclusive_openness'])
 
         all_company_data = convert_dict(all_company_data)
         
@@ -98,16 +102,15 @@ def main():
 #         emotion_lexicon_df = get_columns(rows, ['Word', 'Positive', 'Negative', 
 #                                       'Anger', 'Anticipation', 'Disgust',
 #                                       'Fear', 'Joy', 'Sadness', 'Surprise', 'Trust'])
-        emotion_lexicon_df = pd.read_csv('./data/NRC_Emotion_Lexicon.csv')
-        emotion_lexicon_df.columns = ['Word', 'Positive', 'Negative', 
+        emotion_lexicon_df = read_files('./data/NRC_Emotion_Lexicon.csv', ['Word', 'Positive', 'Negative', 
                                       'Anger', 'Anticipation', 'Disgust',
-                                      'Fear', 'Joy', 'Sadness', 'Surprise', 'Trust']
+                                      'Fear', 'Joy', 'Sadness', 'Surprise', 'Trust'])
         
         # Get personality description
 #         rows = run_query("SELECT * from Personality_Type_Description;")
 #         personality_type_description = get_columns(rows, ['Personality_Type', 'Name', 'Description'])
-        personality_type_description = pd.read_csv('./data/personality_type_description.csv')
-        personality_type_description.columns = ['Personality_Type', 'Name', 'Description']
+        
+        personality_type_description = read_files('./data/personality_type_description.csv', ['Personality_Type', 'Name', 'Description'])
         print(personality_type_description)
         
         # models
