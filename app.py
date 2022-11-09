@@ -68,9 +68,9 @@ def main():
             df.columns = columns_list
             return df
 
-        # Get Bytedance Glassdoor Reviews
-        glassdoor_reviews = pd.read_csv('./data/Bytedance_Glassdoor_Reviews.csv')
-        glassdoor_reviews.columns = ['date', 'year exp', 'score','pros', 'cons', 'position']
+#         # Get Bytedance Glassdoor Reviews
+#         glassdoor_reviews = pd.read_csv('./data/Bytedance_Glassdoor_Reviews.csv')
+#         glassdoor_reviews.columns = ['date', 'year exp', 'score','pros', 'cons', 'position']
 #         rows = run_query("SELECT * from Bytedance_Glassdoor_Reviews;")
 #         glassdoor_reviews = get_columns(rows, ['date', 'year exp', 'score','pros', 'cons', 'position'])
 
