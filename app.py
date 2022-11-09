@@ -54,7 +54,7 @@ def main():
                 cur.execute(query)
                 return cur.fetchall()
             
-        @st.cache(allow_output_mutation=True)
+        @st.experimental_singleton
         def convert_dict(df):
             company_dict = {}
             for company in list(df['company'].unique()):
