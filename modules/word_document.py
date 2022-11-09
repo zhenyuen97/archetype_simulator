@@ -15,7 +15,7 @@ def save_word(text_list, name_of_company):
     personality_chart = 'images/personality_chart.png'
     personality_type_avg_score = 'images/personality_type_avg_score.png'
     
-    output = 'Company Report.docx'
+    output = './report/Company Report.docx'
 
     document_description = f'ANL488 Report Summary ({name_of_company})' #eid.get() 
 
