@@ -579,22 +579,22 @@ and {text_list[4][0]} ({text_list[4][2]}) an average of {text_list[4][1]}')
     with file_path.open("rb") as file:
         hashed_passwords = pickle.load(file)
 
-    authenticator = stauth.Authenticate(names, usernames, hashed_passwords, "sales_dashboard", "abcdef")
-    name, authentication_status, username = authenticator.login("ANL488 Archetype Simulator \n Login", "main")
+#     authenticator = stauth.Authenticate(names, usernames, hashed_passwords, "sales_dashboard", "abcdef")
+#     name, authentication_status, username = authenticator.login("ANL488 Archetype Simulator \n Login", "main")
 
-    if authentication_status == False:
-        st.error("Username/password is incorrect")
+#     if authentication_status == False:
+#         st.error("Username/password is incorrect")
 
-    if authentication_status == None:
-        st.warning("Please enter your username and password")
+#     if authentication_status == None:
+#         st.warning("Please enter your username and password")
 
-    if authentication_status:
-        page_names_to_funcs = {
-            "Main Page": app
-        }
+#     if authentication_status:
+    page_names_to_funcs = {
+        "Main Page": app
+    }
 
-        selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
-        page_names_to_funcs[selected_page]()
+    selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
+    page_names_to_funcs[selected_page]()
 
 if __name__ == "__main__":
     main()
