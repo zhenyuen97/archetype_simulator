@@ -155,7 +155,7 @@ def main():
 
         # Title 
         st.sidebar.image(image, width = 200, use_column_width = 100)
-        st.sidebar.title(f"Welcome {name}")
+        st.sidebar.title(f"Welcome")
         authenticator.logout("Logout", "sidebar")
         
         st.title("Brand Archetype")
